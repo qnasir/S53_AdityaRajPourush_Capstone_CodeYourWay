@@ -1,0 +1,11 @@
+{
+  "name": "codeyourway_server",
+  "version": "1.0.0",
+  "description": "server for my capstone project",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "AdityaPourush",
+  "license": "MIT"
+}
