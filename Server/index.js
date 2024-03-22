@@ -16,6 +16,13 @@ const app = express();
 // Allow incoming requests to have a JSON body
 app.use(express.json());
 
+// Allow incoming requests to have a URL encoded body
+app.use(express.urlencoded({extended: true}));
+
+// Routes for the authentication
+const authRoutes = require('./routes/auth.routes');
+app.use('/auth', authRoutes);
+
 // Root route handler
 app.get("/", (req, res) => res.send(`Server running on port ${port}`));
 
