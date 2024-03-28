@@ -17,24 +17,29 @@ const app = express();
 
 // Enable CORS for all routes
 // The credentials option is set to true, indicating that the server can include credentials(eg: cookies, HTTP authentication) in cross-origin requests.
-app.use(cors({
+app.use(
+  cors({
     origin: process.env.CORS_ORIGIN,
-    credentials: true
-}));
+    credentials: true,
+  })
+);
 
 // Allow incoming requests to have a JSON body
 app.use(express.json());
 
 // Allow incoming requests to have a URL encoded body
-app.use(express.urlencoded({extended: true}));
+app.use(express.urlencoded({ extended: true }));
+
+// Allow incoming requests to have a cookie
+app.use(cookieParser());
 
 // Connection to Database
 const connectDB = require("./config/db");
 connectDB();
 
 // Routes for the authentication
-const authRoutes = require('./routes/auth.routes');
-app.use('/auth', authRoutes);
+const authRoutes = require("./routes/auth.routes");
+app.use("/auth", authRoutes);
 
 // Root route handler
 app.get("/", (req, res) => res.send(`Server running on port ${port}`));
