@@ -30,7 +30,6 @@ const userSchema = mongoose.Schema(
       type: String,
       required: true,
       trim: true,
-      required: true,
     },
     profileImage: {
       type: String,  // cloudinary url
