@@ -5,11 +5,12 @@
 const signUpUser = async (req, res) => {
     try {
         // Send a JSON response with the message "User will Sign up here"
-        res.json("User will Sign up here");
+        res.status(201).json("User will Sign up here");
     } catch (error) {
         // Handle any errors that occur during the signup process
         console.error("Error occurred during signup:", error);
-        res.status(500).json({ error: "An error occurred during signup" });
+        const errorMessage = "An error occurred during signup";
+        res.status(500).json({ error: errorMessage });
     }
 }
 
