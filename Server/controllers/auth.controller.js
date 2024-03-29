@@ -1,12 +1,18 @@
+const zodUserSchema = require("../validators/user.validator");
+const z = require("zod");
 
 // @desc register or signup user 
 // @route POST /auth/signup
 // access Public
 const signUpUser = async (req, res) => {
     try {
+        const validatedUserData = zodUserSchema.parse(req.body);
         // Send a JSON response with the message "User will Sign up here"
         res.status(201).json("User will Sign up here");
     } catch (error) {
+        if(error instanceof z.ZodError) {
+            return res.status(400).json({ error });
+        }
         // Handle any errors that occur during the signup process
         console.error("Error occurred during signup:", error);
         const errorMessage = "An error occurred during signup";
