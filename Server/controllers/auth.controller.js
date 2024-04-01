@@ -1,4 +1,5 @@
 const userValidator = require("../validators/user.validator");
+const User = require("../models/user.model");
 
 // @desc register or signup user
 // @route POST /auth/signup

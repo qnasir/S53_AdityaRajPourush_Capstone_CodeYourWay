@@ -68,4 +68,33 @@ userSchema.methods.matchPassword = async function(enteredPassword) {
   return await bcrypt.compare(enteredPassword, this.password); // returns a promise
 };
 
+// a method that generates a JWT Accesstoken for the user
+userSchema.methods.generateAccessToken = function() {
+    return jwt.sign(
+      {
+        _id: this._id,
+        email: this.email,
+        username: this.username,
+        fullname: this.fullname
+      },
+      process.env.ACCESS_TOKEN_SECRET,
+      {
+        expiresIn: process.env.ACCESS_TOKEN_VALIDITY
+      }
+    )
+}
+
+// a method that generates a JWT Refreshtoken for the user
+userSchema.methods.generateRefreshToken = function(){
+    return jwt.sign(
+      {
+        _id: this._id,
+      },
+      process.env.REFRESH_TOKEN_SECRET,
+      {
+        expiresIn: process.env.REFRESH_TOKEN_VALIDITY
+      }
+    )
+}
+
 export const User = mongoose.model("User", userSchema);
