@@ -12,7 +12,7 @@ const userValidator = Joi.object({
       "string.min": "Username must be at least 3 characters long",
       "string.max": "Username must be at most 20 characters long",
       "string.pattern.base":
-        "Username can only contain alphanumeric characters and underscores only",
+        "Username can only contain alphanumeric characters and underscores",
     }),
   email: Joi.string().email().required().lowercase().trim().messages({
     "string.empty": "Email is a compulsary field",
@@ -29,7 +29,7 @@ const userValidator = Joi.object({
   profileImage: Joi.string()
     .uri()
     .default(
-      "https://img.freepik.com/premium-vector/man-avatar-profile-picture-vector-illustration\\_268834-538.jpg"
+      "https://img.freepik.com/premium-vector/man-avatar-profile-picture-vector-illustration_268834-538.jpg"
     ),
   refreshToken: Joi.string(),
   questionsDone: Joi.array().items(Joi.string().hex().length(24)).messages({
