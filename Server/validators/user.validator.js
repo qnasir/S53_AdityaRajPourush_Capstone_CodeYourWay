@@ -19,6 +19,7 @@ const userValidator = Joi.object({
     .lowercase()
     .trim()
     .messages({
+      'string.empty': 'Email is a compulsary field',
       'string.email': 'Please enter a valid email address',
     }),
   password: Joi.string(),
