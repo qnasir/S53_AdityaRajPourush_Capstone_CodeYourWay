@@ -54,10 +54,10 @@ const signUpUser = async (req, res, next) => {
   } catch (error) {
     // Handle any errors that occur during the signup process
     console.error("Error occurred during signup:", error);
-    const errorMessage = "An error occurred during signup";
-    return res.status(500).json({ error: errorMessage });
+    // const errorMessage = "An error occurred during signup";
+    // return res.status(500).json({ error: errorMessage });
     
-    // next(error);
+    next(error);
   }
 };
 

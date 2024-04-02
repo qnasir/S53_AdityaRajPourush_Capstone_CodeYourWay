@@ -29,7 +29,7 @@ const errorHandler = (err, req, res, next) => {
     }
 
     // Send the error response
-    res.status(statusCode).json({
+    return res.status(statusCode).json({
         // The message is the error message that was set above
         message,
         // If the NODE_ENV environment variable is 'production', set the stack
