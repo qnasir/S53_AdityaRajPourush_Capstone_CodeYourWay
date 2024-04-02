@@ -25,13 +25,13 @@ const signUpUser = async (req, res, next) => {
     // Check if the user already exists
     const userExists = await User.findOne({ email });
     if (userExists) {
-      res.status(409).json({ error: "User with this email already exists" });
+      return res.status(409).json({ error: "User with this email already exists" });
     }
 
     // Check if the username already exists
     const usernameExists = await User.findOne({ username });
     if (usernameExists) {
-      res.status(409).json({ error: "This username already exists" });
+      return res.status(409).json({ error: "This username already exists" });
     }
 
     const user = await User.create({
@@ -41,17 +41,23 @@ const signUpUser = async (req, res, next) => {
       role,
       fullname,
       profileImage,
-      refreshToken,
-      questionsDone,
     });
 
+    const createdUser = await User.findById(user._id).select("-password -refreshToken");
+
+    if(!createdUser){
+      return res.status(500).json({ error: "User could not be created" });
+    }
+
     // Send a JSON response with the message "User will Sign up here"
-    res.status(201).json("User Signed Up !");
+    return res.status(201).json({createdUser, message: "user signed up successfully"});
   } catch (error) {
     // Handle any errors that occur during the signup process
     console.error("Error occurred during signup:", error);
     const errorMessage = "An error occurred during signup";
-    res.status(500).json({ error: errorMessage });
+    return res.status(500).json({ error: errorMessage });
+    
+    // next(error);
   }
 };
 
