@@ -4,12 +4,47 @@ const User = require("../models/user.model");
 // @desc register or signup user
 // @route POST /auth/signup
 // access Public
-const signUpUser = async (req, res) => {
+const signUpUser = async (req, res, next) => {
   try {
     const { error } = userValidator.validate(req.body);
     if (error) {
       return res.status(400).json({ error: error.details[0].message });
     }
+
+    const {
+      username,
+      email,
+      password,
+      role,
+      fullname,
+      profileImage,
+      refreshToken,
+      questionsDone,
+    } = req.body;
+
+    // Check if the user already exists
+    const userExists = await User.findOne({ email });
+    if (userExists) {
+      res.status(409).json({ error: "User with this email already exists" });
+    }
+
+    // Check if the username already exists
+    const usernameExists = await User.findOne({ username });
+    if (usernameExists) {
+      res.status(409).json({ error: "This username already exists" });
+    }
+
+    const user = await User.create({
+      username: username.toLowerCase(),
+      email,
+      password,
+      role,
+      fullname,
+      profileImage,
+      refreshToken,
+      questionsDone,
+    });
+
     // Send a JSON response with the message "User will Sign up here"
     res.status(201).json("User Signed Up !");
   } catch (error) {
