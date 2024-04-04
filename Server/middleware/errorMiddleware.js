@@ -16,7 +16,7 @@ const notFound = (req, res, next) => {
 const errorHandler = (err, req, res, next) => {
     // Set the HTTP status code based on the error. If the status code is
     // not already set, set it to 500 (Internal Server Error)
-    let statusCode = res.statusCode === 200 ? 500 : res.statusCode;
+    let statusCode = err.statusCode ?? 500;
 
     // Set the error message based on the error. If the error is a CastError
     // (which is thrown when a MongoDB ID is invalid), set the message to
