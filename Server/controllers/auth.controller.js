@@ -72,8 +72,8 @@ const logInUser = async (req, res, next) => {
     const {email, username, password} = req.body;
 
     // if both email and username are not provided, show error || preventive check.
-    if(!email || !username) {
-      const err = new ApiError(400, "Email and username are required");
+    if(!email && !username) {
+      const err = new ApiError(400, "Email or username is required");
       return next(err);
     }
 
@@ -105,7 +105,10 @@ const logInUser = async (req, res, next) => {
       secure: true
     }
 
-    return res.status(200).cookie("access-token", accessToken, cookieOptions).cookie("refresh-token", refreshToken, cookieOptions).json({loggedInUser, message: "User logged in successfully", accessToken, refreshToken});
+    return res.status(200)
+    .cookie("access-token", accessToken, cookieOptions)
+    .cookie("refresh-token", refreshToken, cookieOptions)
+    .json({loggedInUser, message: "User logged in successfully", accessToken, refreshToken});
 
   } catch (error) {
     // Handle any errors that occur during the login process
