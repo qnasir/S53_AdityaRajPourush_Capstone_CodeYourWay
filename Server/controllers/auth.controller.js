@@ -150,8 +150,58 @@ const logOutUser = async (req, res, next) => {
   }
 };
 
+
+const newAccessToken = async (req, res, next) => {
+  
+  try {
+    const incomingRefreshToken = req.cookies.refreshToken || req.body.refreshToken;  // refresh token from cookie or body
+  
+    if(!incomingRefreshToken) {
+      const err = new ApiError(401, "Unauthorized Access");
+      next(err);
+    }
+
+    // verify the incoming refresh Token
+    const decodedToken = await jwt.verify(incomingRefreshToken, process.env.REFRESH_TOKEN_SECRET);
+
+    const user = await User.findUserbyId(decodedToken?._id)
+
+    if (!user){
+      const err = new ApiError(401, "Invalid refresh token")
+      next(err);
+    }
+
+    // Check if the refresh token in db is the same as the refresh token in incoming token
+    if(user?.refreshToken !== incomingRefreshToken) {
+      const err = new ApiError('401', "Refresh token is expired or used")
+      next(err);
+    }
+
+    // Cookie Options
+    const cookieOptions = {
+      secure: true,
+      httpOnly: true
+    }
+
+    // If refreshToken is same, generate a new accessToken and refreshToken
+    const {accessToken, refreshToken} = await generateAccessAndRefreshTokens(user, next);
+
+    //response
+    return res.status(200)
+    .cookie("access-token", accessToken, cookieOptions)
+    .cookie("refresh-token", refreshToken, cookieOptions)
+    .json({message: "accessToken refreshed", accessToken, refreshToken});
+
+  } catch (error) {
+    const err = new ApiError(401, error?.message || "An error occurred during accessToken refresh");
+    next(err);
+  }
+
+}
+
 module.exports = {
   signUpUser,
   logInUser,
   logOutUser,
+  newAccessToken
 };
