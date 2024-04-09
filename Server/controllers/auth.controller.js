@@ -122,14 +122,31 @@ const logInUser = async (req, res, next) => {
 // @desc logout user
 // route POST /auth/logout
 // access Public
-const logOutUser = async (req, res) => {
+const logOutUser = async (req, res, next) => {
   try {
-    // Send a JSON response with the message "User will Logout here"
-    res.json("User will Logout here");
+
+    await User.findByIdAndUpdate(req.user._id, {
+      $unset: {
+        refreshToken: 1 // removes the field from the document
+      }
+    }, { new: true });
+
+    // Clear the cookies
+    const cookieOptions = {
+      httpOnly: true,
+      secure: true
+    }
+
+    // Response
+    return res.status(200)
+    .clearCookie("access-token", cookieOptions)
+    .clearCookie("refresh-token", cookieOptions)
+    .json({ message: "User logged out successfully" });
+  
   } catch (error) {
     // Handle any errors that occur during the logout process
-    console.error("Error occurred during logout:", error);
-    res.status(500).json({ error: "An error occurred during logout" });
+    const err = new ApiError(500, "An error occurred during logout");
+    next(err);
   }
 };
 
