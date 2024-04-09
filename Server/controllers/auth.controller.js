@@ -173,7 +173,7 @@ const newAccessToken = async (req, res, next) => {
 
     // Check if the refresh token in db is the same as the refresh token in incoming token
     if(user?.refreshToken !== incomingRefreshToken) {
-      const err = ApiError('401', "Refresh token is expired of used")
+      const err = new ApiError('401', "Refresh token is expired or used")
       next(err);
     }
 
