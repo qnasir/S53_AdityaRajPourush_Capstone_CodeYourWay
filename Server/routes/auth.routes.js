@@ -8,6 +8,8 @@ const { verifyJWTToken } = require("../middleware/auth.middleware");
 router.post('/signup', signUpUser);
 router.post('/login', logInUser);
 
+router.post('/new-access-token', newAccessToken);
+
 // Secured by JWT Token verification
 router.post('/logout',verifyJWTToken, logOutUser);
 
