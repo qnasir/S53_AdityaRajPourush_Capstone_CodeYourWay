@@ -2,7 +2,7 @@ const express = require("express");
 
 const router = express.Router();
 
-const {signUpUser, logInUser, logOutUser} = require("../controllers/auth.controller");
+const {signUpUser, logInUser, logOutUser, newAccessToken} = require("../controllers/auth.controller");
 const { verifyJWTToken } = require("../middleware/auth.middleware");
 
 router.post('/signup', signUpUser);
