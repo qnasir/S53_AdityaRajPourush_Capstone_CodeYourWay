@@ -67,7 +67,7 @@ const updatePassword = async (req, res, next) => {
 
         return res.status(200).json({message: "Password updated successfully"});
     } catch (error) {
-        const err = new ApiError(500, error?.message || "Cannot get user profile");
+        const err = new ApiError(500, error?.message || "Cannot update password");
         next(err);
     }
 }
