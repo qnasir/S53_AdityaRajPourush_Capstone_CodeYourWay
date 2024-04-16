@@ -84,7 +84,7 @@ const updateProfileImage = async (req, res, next) => {
 
         const image = await uploadOnCloudinary(imageLocalPath);
 
-        if(!image.url){
+        if(!image ||!image.url){
             const err = new ApiError(500, "Cannot upload profile image");
             return next(err);
         }
