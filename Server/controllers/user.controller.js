@@ -14,7 +14,9 @@ const getUserProfile = async (req, res, next) => {
     }
 }
 
-
+// @desc update user profile
+// @route PATCH /user/profile
+// @access Private
 const updateUserProfile = async (req, res, next) => {
     
     try {
@@ -45,6 +47,9 @@ const updateUserProfile = async (req, res, next) => {
     }
 }
 
+// @desc update user password
+// @route PATCH /user/password
+// @access Private
 const updatePassword = async (req, res, next) => {
     try {
         const {currentPassword, newPassword} = req.body;
