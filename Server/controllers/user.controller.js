@@ -98,7 +98,7 @@ const updateProfileImage = async (req, res, next) => {
     ).select("-password -refreshToken");
 
     // Delete the old image from Cloudinary
-    if(user.profileImage.include('res.cloudinary.com')){
+    if(user.profileImage && user.profileImage.includes('res.cloudinary.com')){
         const oldImagePublicId = user.profileImage.split('/').pop().split('.')[0];
         await cloudinary.uploader.destroy(oldImagePublicId);
     }
