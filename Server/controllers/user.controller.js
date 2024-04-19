@@ -2,6 +2,7 @@ const User = require("../models/user.model")
 const {ApiError} = require("../utils/ApiError");
 const { uploadOnCloudinary } = require("../utils/cloudinary");
 const userValidator = require("../validators/user.validator");
+const { v2: cloudinary } = require('cloudinary');
 
 // @desc get user profile
 // @route GET /user/profile
@@ -95,6 +96,12 @@ const updateProfileImage = async (req, res, next) => {
             }
         }, {new: true}
     ).select("-password -refreshToken");
+
+    // Delete the old image from Cloudinary
+    if(user.profileImage && user.profileImage.includes('res.cloudinary.com')){
+        const oldImagePublicId = user.profileImage.split('/').pop().split('.')[0];
+        await cloudinary.uploader.destroy(oldImagePublicId);
+    }
 
     return res.status(200).json({user, message: "Profile image updated successfully"})
 
