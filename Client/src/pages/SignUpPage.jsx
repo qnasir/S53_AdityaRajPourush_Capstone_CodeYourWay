@@ -78,6 +78,11 @@ const SignUpPage = () => {
 
   function onSubmit(values) {
     console.log(values);
+    try {
+      
+    } catch (error) {
+      
+    }
   }
 
   return (
