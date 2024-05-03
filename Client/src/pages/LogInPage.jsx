@@ -1,7 +1,5 @@
-import React from "react";
-import { zodResolver } from "@hookform/resolvers/zod";
+import React, { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
-import { z } from "zod";
 import { HomeIcon } from "@radix-ui/react-icons";
 import { Button } from "@/components/ui/button";
 import { ModeToggle } from "@/components/mode-toggle";
@@ -25,60 +23,22 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { cn } from "@/lib/utils";
-import { useTheme } from "@/components/context/theme-provider";
 
-const SignUpSchema = z.object({
-  username: z
-    .string()
-    .min(3, { message: "Username must be at least 3 characters long" })
-    .max(20, { message: "Username must be at most 20 characters long" })
-    .regex(/^[a-zA-Z0-9_]+$/, {
-      message:
-        "Username can only contain alphanumeric characters and underscores",
-    })
-    .trim()
-    .toLowerCase(),
-
-  email: z
-    .string()
-    .min(1, { message: "Email is required" })
-    .email({ message: "Invalid email address" })
-    .trim()
-    .toLowerCase(),
-
-  password: z
-    .string()
-    .min(8, { message: "Password must be at least 8 characters long" })
-    .max(100, { message: "Password must be at most 100 characters long" })
-    .regex(
-      /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]+$/,
-      {
-        message:
-          "Password must contain at least one uppercase letter, one lowercase letter, one digit, and one special character",
-      }
-    ),
-
-  fullname: z
-    .string()
-    .min(3, { message: "Full name must be at least 3 characters long" })
-    .max(30, { message: "Full name must be at most 30 characters long" })
-    .trim(),
-});
-
-const SignUpPage = () => {
+const LogInPage = () => {
   const form = useForm({
-    resolver: zodResolver(SignUpSchema),
     defaultValues: {
-      username: "",
       email: "",
+      username: "",
       password: "",
-      fullname: "",
     },
   });
+  
 
   function onSubmit(values) {
     console.log(values);
   }
+
+  
 
   return (
     <div className="w-full min-h-[100vh]">
@@ -94,8 +54,10 @@ const SignUpPage = () => {
       <div>
         <Card className="max-w-lg mx-auto">
           <CardHeader>
-            <CardTitle>Sign Up</CardTitle>
-            <CardDescription>Fill in Credentials to sign up</CardDescription>
+            <CardTitle>Log In</CardTitle>
+            <CardDescription>
+              Fill in Username or Email
+            </CardDescription>
           </CardHeader>
           <Form {...form}>
             <form onSubmit={form.handleSubmit(onSubmit)}>
@@ -107,20 +69,6 @@ const SignUpPage = () => {
                     <FormItem>
                       <FormControl>
                         <Input placeholder="Username" {...field} />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-              </CardContent>
-              <CardContent>
-                <FormField
-                  control={form.control}
-                  name="fullname"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormControl>
-                        <Input placeholder="Fullname" {...field} />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -152,7 +100,12 @@ const SignUpPage = () => {
                       </FormControl>
                       <FormMessage />
                       <FormDescription>
-                        <Link to={"/"} className="underline hover:decoration-sky-600">Forgot Password ?</Link>
+                        <Link
+                          to={"/"}
+                          className="underline hover:decoration-sky-600"
+                        >
+                          Forgot Password ?
+                        </Link>
                       </FormDescription>
                     </FormItem>
                   )}
@@ -160,7 +113,7 @@ const SignUpPage = () => {
               </CardContent>
               <CardFooter>
                 <Button className="w-full" type="submit">
-                  Sign Up
+                  Log In
                 </Button>
               </CardFooter>
             </form>
@@ -173,16 +126,20 @@ const SignUpPage = () => {
                 src="https://img.icons8.com/fluency/48/google-logo.png"
                 alt="google-logo"
               />
-              Sign Up with Google
+              Log In with Google
             </Button>
           </CardFooter>
         </Card>
-        <p className="text-center m-[1vh]">Already have an account? 
-          <Link to={"/login"} className="hover:underline"> Login Here </Link>
+        <p className="text-center m-[1vh]">
+          Not have an account?
+          <Link to={"/signup"} className="hover:underline">
+            {" "}
+            SignUp Here{" "}
+          </Link>
         </p>
       </div>
     </div>
   );
 };
 
-export default SignUpPage;
+export default LogInPage;

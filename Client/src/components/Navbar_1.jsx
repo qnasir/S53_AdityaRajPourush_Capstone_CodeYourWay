@@ -32,7 +32,9 @@ const Navbar_1 = () => {
             <Link to={"/signup"}>
               <Button variant="ghost">Register</Button>
             </Link>
-            <Button variant="ghost">Login</Button>
+            <Link to={"/login"}>
+              <Button variant="ghost">Login</Button>
+            </Link>
           </div>
         </div>
       </div>
