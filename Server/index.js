@@ -37,9 +37,6 @@ app.use(cookieParser());
 const connectDB = require("./config/db");
 connectDB();
 
-// Middleware for handling errors
-app.use(notFound);
-app.use(errorHandler);
 
 // Routes for the authentication
 const authRoutes = require("./routes/auth.routes");
@@ -52,6 +49,9 @@ app.use("/user", userRoutes);
 // Root route handler
 app.get("/", (req, res) => res.send(`Server running on port ${port}`));
 
+// Middleware for handling errors
+app.use(notFound);
+app.use(errorHandler);
 
 // Listen for incoming requests
 app.listen(port, () => console.log(`Listening on port ${port}`));
