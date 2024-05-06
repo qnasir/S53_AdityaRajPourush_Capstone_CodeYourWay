@@ -1,9 +1,10 @@
-import React from "react";
+import React, { useContext } from "react";
 import { Button } from "./ui/button";
 import { ModeToggle } from "./mode-toggle";
 
 import { useTheme } from "@/components/context/theme-provider";
 import { Link } from "react-router-dom";
+import { AuthContext } from "./context/authContext";
 
 const Navbar_1 = () => {
   const { theme } = useTheme();
@@ -11,6 +12,8 @@ const Navbar_1 = () => {
   const navbarBgColor = theme === "dark" ? "bg-fuchsia-800" : "bg-violet-400";
   const navbarTextColor =
     theme === "dark" ? "text-slate-300" : "text-slate-800";
+
+  const { isLoggedIn, username, logout } = useContext(AuthContext);
 
   return (
     <div
@@ -29,12 +32,23 @@ const Navbar_1 = () => {
         <div className="flex justify-around w-[20vw]">
           <ModeToggle />
           <div className="flex justify-around">
-            <Link to={"/signup"}>
-              <Button variant="ghost">Register</Button>
-            </Link>
-            <Link to={"/login"}>
-              <Button variant="ghost">Login</Button>
-            </Link>
+            {isLoggedIn ? (
+              <>
+                <Button variant="outline">{username}</Button>
+                <Button variant="ghost" onClick={logout}>
+                  Logout
+                </Button>
+              </>
+            ) : (
+              <>
+                <Link to={"/signup"}>
+                  <Button variant="ghost">Register</Button>
+                </Link>
+                <Link to={"/login"}>
+                  <Button variant="ghost">Login</Button>
+                </Link>
+              </>
+            )}
           </div>
         </div>
       </div>

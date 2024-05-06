@@ -43,17 +43,25 @@ const signUpUser = async (req, res, next) => {
     });
 
     const createdUser = await User.findById(user._id).select(
-      "-password -refreshToken"
+      "-password"
     );
 
     if (!createdUser) {
       return res.status(500).json({ error: "User could not be created" });
     }
 
+    const {accessToken, refreshToken} = await generateAccessAndRefreshTokens(createdUser, next);
+
+    const cookieOptions = {
+      httpOnly: true,
+      secure: true
+    }
     // Send a JSON response with the message "User will Sign up here"
     return res
       .status(201)
-      .json({ createdUser, message: "user signed up successfully" });
+      .cookie("access-token", accessToken, cookieOptions)
+      .cookie("refresh-token", refreshToken, cookieOptions)
+      .json({ createdUser, message: "signed up successfully", refreshToken, accessToken });
   } catch (error) {
     // Handle any errors that occur during the signup process
     // process.env.NODE_ENV == 'production' ? null : console.error(error);
@@ -98,7 +106,7 @@ const logInUser = async (req, res, next) => {
 
     const {accessToken, refreshToken} = await generateAccessAndRefreshTokens(user, next);
 
-    const loggedInUser = await User.findById(user._id).select("-password, -refreshToken");
+    const loggedInUser = await User.findById(user._id).select("-password");
 
     const cookieOptions = {
       httpOnly: true,
@@ -108,7 +116,7 @@ const logInUser = async (req, res, next) => {
     return res.status(200)
     .cookie("access-token", accessToken, cookieOptions)
     .cookie("refresh-token", refreshToken, cookieOptions)
-    .json({loggedInUser, message: "User logged in successfully", accessToken, refreshToken});
+    .json({loggedInUser, message: "logged in successfully", accessToken, refreshToken});
 
   } catch (error) {
     // Handle any errors that occur during the login process
@@ -139,8 +147,8 @@ const logOutUser = async (req, res, next) => {
 
     // Response
     return res.status(200)
-    .clearCookie("access-token", cookieOptions)
-    .clearCookie("refresh-token", cookieOptions)
+    // .clearCookie("access-token", cookieOptions)  
+    // .clearCookie("refresh-token", cookieOptions)
     .json({ message: "User logged out successfully" });
   
   } catch (error) {
