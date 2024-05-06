@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useContext } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
@@ -26,6 +26,9 @@ import {
 import { Input } from "@/components/ui/input";
 import { cn } from "@/lib/utils";
 import { useTheme } from "@/components/context/theme-provider";
+import axios from "axios";
+import { Toaster, toast } from "sonner";
+import { AuthContext } from "@/components/context/authContext";
 
 const SignUpSchema = z.object({
   username: z
@@ -76,17 +79,35 @@ const SignUpPage = () => {
     },
   });
 
-  function onSubmit(values) {
+  const {login} = useContext(AuthContext)
+
+  async function onSubmit(values) {
     console.log(values);
     try {
-      
+      const response = await axios.post(
+        `${import.meta.env.VITE_BASE_URL}/auth/signup`,
+        values
+      );
+      console.log(response);
+
+      // Store the access token and refresh token in the local storage or session storage
+      localStorage.setItem('accessToken', response.data.accessToken);
+      localStorage.setItem('refreshToken', response.data.refreshToken);
+
+      // Update the state with user data and logged-in status
+      login(response.data.createdUser.username, response.data.createdUser._id)
+
+
+      toast.success(`${response.data.createdUser.username}, ${response.data.message}`);
     } catch (error) {
-      
+      console.log(error);
+      toast.error(`${error.response.data.message}`);
     }
   }
 
   return (
     <div className="w-full min-h-[100vh]">
+      <Toaster closeButton="true" richColors="true" position="top-center"/>
       <div className="auth-top-nav w-[100%] flex justify-between px-[3vw] py-[2vh] items-center">
         <Link to={"/"}>
           <Button variant="outline" size="icon">
@@ -157,7 +178,12 @@ const SignUpPage = () => {
                       </FormControl>
                       <FormMessage />
                       <FormDescription>
-                        <Link to={"/"} className="underline hover:decoration-sky-600">Forgot Password ?</Link>
+                        <Link
+                          to={"/"}
+                          className="underline hover:decoration-sky-600"
+                        >
+                          Forgot Password ?
+                        </Link>
                       </FormDescription>
                     </FormItem>
                   )}
@@ -182,8 +208,12 @@ const SignUpPage = () => {
             </Button>
           </CardFooter>
         </Card>
-        <p className="text-center m-[1vh]">Already have an account? 
-          <Link to={"/login"} className="hover:underline"> Login Here </Link>
+        <p className="text-center m-[1vh]">
+          Already have an account?
+          <Link to={"/login"} className="hover:underline">
+            {" "}
+            Login Here{" "}
+          </Link>
         </p>
       </div>
     </div>

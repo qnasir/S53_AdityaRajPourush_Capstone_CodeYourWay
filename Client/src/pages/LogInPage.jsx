@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { HomeIcon } from "@radix-ui/react-icons";
 import { Button } from "@/components/ui/button";
@@ -23,6 +23,9 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { cn } from "@/lib/utils";
+import { Toaster, toast } from "sonner";
+import axios from "axios";
+import { AuthContext } from "@/components/context/authContext";
 
 const LogInPage = () => {
   const form = useForm({
@@ -32,16 +35,37 @@ const LogInPage = () => {
       password: "",
     },
   });
+
+  const {login} = useContext(AuthContext)
   
 
-  function onSubmit(values) {
+  async function onSubmit(values) {
     console.log(values);
+    try {
+      const response = await axios.post(
+        `${import.meta.env.VITE_BASE_URL}/auth/login`,
+        values
+      );
+      console.log(response);
+
+      // Store the access token and refresh token in the local storage or session storage
+      localStorage.setItem('accessToken', response.data.accessToken);
+      localStorage.setItem('refreshToken', response.data.refreshToken);
+
+      login(response.data.loggedInUser.username, response.data.loggedInUser._id);
+
+      toast.success(`${response.data.loggedInUser.username}, ${response.data.message}`);
+    } catch (error) {
+      console.log(error);
+      toast.error(`${error.response.data.message}`);
+    }
   }
 
   
 
   return (
     <div className="w-full min-h-[100vh]">
+      <Toaster closeButton="true" richColors="true" position="top-center"/>
       <div className="auth-top-nav w-[100%] flex justify-between px-[3vw] py-[2vh] items-center">
         <Link to={"/"}>
           <Button variant="outline" size="icon">
