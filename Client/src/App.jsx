@@ -6,6 +6,7 @@ import SignUpPage from "./pages/SignUpPage";
 import { ThemeProvider } from "@/components/context/theme-provider";
 import LogInPage from "./pages/LogInPage";
 import { AuthProvider } from "./components/context/authContext";
+import Playground from "./pages/Playground";
 
 function App() {
   return (
@@ -16,6 +17,7 @@ function App() {
           <Route path="/" element={<LandingPage />} />
           <Route path="/signup" element={<SignUpPage />} />
           <Route path="/login" element={<LogInPage/>}/>
+          <Route path="/playground" element={<Playground/>} />
         </Routes>
         </AuthProvider>
       </ThemeProvider>
