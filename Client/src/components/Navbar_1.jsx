@@ -89,7 +89,7 @@ const Navbar_1 = () => {
           </div>
           <div className="flex justify-between w-full sm:w-auto">
             <ModeToggle />
-            <div>
+            <div className="ml-4">
               {isLoggedIn ? (
                 <div className="flex justify-between">
                   <Button variant="outline">{username}</Button>
