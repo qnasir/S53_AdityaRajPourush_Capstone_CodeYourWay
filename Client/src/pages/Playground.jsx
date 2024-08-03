@@ -1,5 +1,5 @@
 import Navbar_1 from "@/components/Navbar_1";
-import React from "react";
+import React, { useEffect, useState } from "react";
 import {
   ResizableHandle,
   ResizablePanel,
@@ -22,9 +22,22 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select"
+import Editor from '@monaco-editor/react';
 
 
 const Playground = () => {
+
+  const [selectedLanguage, setSelectedLanguage] = useState('javascript');
+  const [code, setCode] = useState('');
+
+  useEffect(()=>{
+    console.log(selectedLanguage);
+  }, [selectedLanguage])
+
+  // useEffect(()=>{
+  //   console.log(code); 
+  // }, [code])
+
   return (
     <div>
       <Navbar_1 />
@@ -63,14 +76,15 @@ const Playground = () => {
                       </TooltipContent>
                     </Tooltip>
                   </TooltipProvider>
-                  <Select defaultValue="C++">
+                  <Select value={selectedLanguage} onValueChange={setSelectedLanguage}>
                     <SelectTrigger className="border-2 border-sky-500 w-[100px]">
-                      <SelectValue placeholder="C++"/>
+                      <SelectValue placeholder="javascript" />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="C++">C++</SelectItem>
-                      <SelectItem value="Python">Python</SelectItem>
-                      <SelectItem value="JavaScript">JavaScript</SelectItem>
+                      <SelectItem value="cpp">C++</SelectItem>
+                      <SelectItem value="python">Python</SelectItem>
+                      <SelectItem value="javascript">JavaScript</SelectItem>
+                      <SelectItem value="java">Java</SelectItem>
                     </SelectContent>
                   </Select>
                   <Button className="bg-[#32BEA6] p-">
@@ -81,7 +95,7 @@ const Playground = () => {
             </div>
 
             <div className="editor p-1">
-                
+                <Editor height="88vh" language={selectedLanguage} theme="vs-dark" value={code} onChange={setCode}/>
             </div>
           </ResizablePanel>
           <ResizableHandle />
