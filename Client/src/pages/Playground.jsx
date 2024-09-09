@@ -23,6 +23,7 @@ import {
   SelectValue,
 } from "@/components/ui/select"
 import Editor from '@monaco-editor/react';
+import axios from "axios";
 
 
 const Playground = () => {
@@ -37,6 +38,19 @@ const Playground = () => {
   // useEffect(()=>{
   //   console.log(code); 
   // }, [code])
+
+  const executeCode = async()=> {
+    let res = await axios.post("https://emkc.org/api/v2/piston/execute", {
+      "language": selectedLanguage,
+      "version": "*",
+      "files": [
+        {
+          "content": code
+        }
+      ]
+    });
+    console.log(res.data);
+  }
 
   return (
     <div>
@@ -87,7 +101,7 @@ const Playground = () => {
                       <SelectItem value="java">Java</SelectItem>
                     </SelectContent>
                   </Select>
-                  <Button className="bg-[#32BEA6] p-">
+                  <Button className="bg-[#32BEA6] p-" onClick={executeCode}>
                     Run Code <img width="20" height="20" src="https://img.icons8.com/flat-round/64/000000/play--v1.png" alt="play--v1"/>
                   </Button>
                 </div>
