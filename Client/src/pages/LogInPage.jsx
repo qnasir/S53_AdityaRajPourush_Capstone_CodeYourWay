@@ -3,7 +3,7 @@ import { useForm } from "react-hook-form";
 import { HomeIcon } from "@radix-ui/react-icons";
 import { Button } from "@/components/ui/button";
 import { ModeToggle } from "@/components/mode-toggle";
-import { Link } from "react-router-dom";
+import { Link, Navigate, useNavigate } from "react-router-dom";
 import {
   Card,
   CardContent,
@@ -37,6 +37,7 @@ const LogInPage = () => {
   });
 
   const {login} = useContext(AuthContext)
+  const navigate = useNavigate();
   
 
   async function onSubmit(values) {
@@ -55,6 +56,7 @@ const LogInPage = () => {
       login(response.data.loggedInUser.username, response.data.loggedInUser._id);
 
       toast.success(`${response.data.loggedInUser.username}, ${response.data.message}`);
+      navigate("/", {replace: true});
     } catch (error) {
       console.log(error);
       toast.error(`${error.response.data.message}`);
@@ -120,7 +122,7 @@ const LogInPage = () => {
                   render={({ field }) => (
                     <FormItem>
                       <FormControl>
-                        <Input placeholder="Password" {...field} />
+                        <Input type="password" placeholder="Password" {...field} />
                       </FormControl>
                       <FormMessage />
                       <FormDescription>
