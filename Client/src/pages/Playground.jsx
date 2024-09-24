@@ -30,8 +30,10 @@ const Playground = () => {
 
   const [selectedLanguage, setSelectedLanguage] = useState('javascript');
   const [code, setCode] = useState('');
+  const [input, setInput] = useState('');
+  const [output, setOutput] = useState('');
 
-  useEffect(()=>{
+  useEffect(() => {
     console.log(selectedLanguage);
   }, [selectedLanguage])
 
@@ -39,18 +41,31 @@ const Playground = () => {
   //   console.log(code); 
   // }, [code])
 
-  const executeCode = async()=> {
-    let res = await axios.post("https://emkc.org/api/v2/piston/execute", {
-      "language": selectedLanguage,
-      "version": "*",
-      "files": [
-        {
-          "content": code
-        }
-      ]
-    });
-    console.log(res.data);
-  }
+  const executeCode = async () => {
+    try {
+      const res = await axios.post("https://emkc.org/api/v2/piston/execute", {
+        language: selectedLanguage,
+        version: "*",
+        files: [
+          {
+            content: code,
+          },
+        ],
+        stdin: input, // Send the input data
+      });
+
+      console.log(res.data);
+      const { stdout, stderr } = res.data.run;
+      if (stderr) {
+        setOutput(stderr); // If there is an error, show stderr
+      } else {
+        setOutput(stdout); // Otherwise, show stdout
+      }
+    } catch (error) {
+      console.error("Error executing code:", error);
+      setOutput("Error executing code.");
+    }
+  };
 
   return (
     <div>
@@ -64,13 +79,13 @@ const Playground = () => {
             <div className="flex items-center justify-center min-w-36">
               <div className="nav bg-secondary h-[5vh] flex items-center w-full px-3 justify-between m-1 rounded-sm">
                 <div className="flex items-center justify-between w-[20vw]">
-                  <Input className="p-1 border-secondary-foreground h-[3.7vh] max-w-[180px]"/>
-                  <Button className="mx-1" variant="outline"><UploadIcon className="mx-0.5"/>Save</Button>
+                  <Input className="p-1 border-secondary-foreground h-[3.7vh] max-w-[180px]" />
+                  <Button className="mx-1" variant="outline"><UploadIcon className="mx-0.5" />Save</Button>
                   <TooltipProvider>
                     <Tooltip>
                       <TooltipTrigger>
                         <Button size="icon" className="mx-1">
-                          <Pencil2Icon className="h-5 w-7"/>
+                          <Pencil2Icon className="h-5 w-7" />
                         </Button>
                       </TooltipTrigger>
                       <TooltipContent>
@@ -83,7 +98,7 @@ const Playground = () => {
                   <TooltipProvider >
                     <Tooltip>
                       <TooltipTrigger>
-                      <Button size="icon" ><GearIcon className="h-5 w-7"/></Button>
+                        <Button size="icon" ><GearIcon className="h-5 w-7" /></Button>
                       </TooltipTrigger>
                       <TooltipContent>
                         <p>Settings</p>
@@ -102,14 +117,14 @@ const Playground = () => {
                     </SelectContent>
                   </Select>
                   <Button className="bg-[#32BEA6] p-" onClick={executeCode}>
-                    Run Code <img width="20" height="20" src="https://img.icons8.com/flat-round/64/000000/play--v1.png" alt="play--v1"/>
+                    Run Code <img width="20" height="20" src="https://img.icons8.com/flat-round/64/000000/play--v1.png" alt="play--v1" />
                   </Button>
                 </div>
               </div>
             </div>
 
             <div className="editor p-1">
-                <Editor height="88vh" language={selectedLanguage} theme="vs-dark" value={code} onChange={setCode}/>
+              <Editor height="88vh" language={selectedLanguage} theme="vs-dark" value={code} onChange={setCode} />
             </div>
           </ResizablePanel>
           <ResizableHandle />
@@ -119,13 +134,24 @@ const Playground = () => {
                 <div className="nav bg-secondary h-[5vh] flex items-center px-3 justify-between m-1 rounded-sm">
                   <span className="font-semibold">Output</span>
                 </div>
-              </ResizablePanel>
-              <ResizableHandle />
-              <ResizablePanel minSize={10}>
-              <div className="nav bg-secondary h-[3vh] flex items-center px-3 justify-between m-1 rounded-sm">
-                  <span className="font-semibold">Input</span>
+                <div className="p-2 h-[calc(100%-5vh-8px)] overflow-auto bg-background text-foreground">
+                  <pre>{output}</pre>
                 </div>
               </ResizablePanel>
+
+              <ResizableHandle />
+              <ResizablePanel minSize={10}>
+                <div className="nav bg-secondary h-[3vh] flex items-center px-3 justify-between m-1 rounded-sm">
+                  <span className="font-semibold">Input</span>
+                </div>
+                <textarea
+                  className="w-full h-[calc(100%-3vh-8px)] p-2 bg-background text-foreground resize-none"
+                  value={input}
+                  onChange={(e) => setInput(e.target.value)}
+                  placeholder="Enter your input here..."
+                />
+              </ResizablePanel>
+
             </ResizablePanelGroup>
           </ResizablePanel>
         </ResizablePanelGroup>
