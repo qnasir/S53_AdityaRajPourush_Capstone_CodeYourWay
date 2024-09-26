@@ -9,6 +9,9 @@ dotenv.config();
 // Middleware for handling not found errors
 const { notFound, errorHandler } = require("./middleware/errorMiddleware");
 
+// snippet routes import
+const snippetRoutes = require("./routes/snippet.routes");
+
 // Port to run the server on
 const port = process.env.PORT || 3000;
 
@@ -45,6 +48,9 @@ app.use("/auth", authRoutes);
 // Routes for user
 const userRoutes = require("./routes/user.routes");
 app.use("/user", userRoutes);
+
+// Routes for snippet
+app.use("/snippet", snippetRoutes);
 
 // Root route handler
 app.get("/", (req, res) => res.send(`Server running on port ${port}`));
