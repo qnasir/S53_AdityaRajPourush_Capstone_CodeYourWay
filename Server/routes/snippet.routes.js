@@ -9,8 +9,8 @@ router.use(verifyJWTToken);
 
 router.post('/create', createSnippet);
 router.get('/user', getUserSnippets);
-router.get(':/id', getSnippetById);
-router.put(':/id', updateSnippet);
-router.delete(':/id', deleteSnippet);
+router.get('/:id', getSnippetById);
+router.put('/:id', updateSnippet);
+router.delete('/:id', deleteSnippet);
 
 module.exports = router;

@@ -4,7 +4,7 @@ const {ApiError} = require("../utils/ApiError");
 const createSnippet = async(req, resizeBy, next) => {
     try{
         const {title, language, code} = req.body;
-        const snipppet = await Snippet.create({
+        const snippet = await Snippet.create({
             user: req.user._id,
             title,
             language,
@@ -28,7 +28,7 @@ const getUserSnippets = async(req, res, next) => {
 const getSnippetById = async(req, res, next) => {
     try {
         const snippet = await Snippet.findOne({_id: req.params.id, user: req.user._id});
-        if(!Snippet){
+        if(!snippet){
             next(new ApiError(404, "Snippet not found"));
         }
         res.status(200).json({snippet, message: "Snippet fetched successfully"});
