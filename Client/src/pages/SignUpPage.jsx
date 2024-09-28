@@ -105,6 +105,64 @@ const SignUpPage = () => {
     }
   }
 
+  const handleGoogleSignIn = () => {
+    const client = google.accounts.oauth2.initTokenClient({
+      client_id: import.meta.env.VITE_GOOGLE_CLIENT_ID,
+      scope: 'https://www.googleapis.com/auth/userinfo.email https://www.googleapis.com/auth/userinfo.profile',
+      callback: async (response) => {
+        if (response.access_token) {
+          try {
+            // Get the ID token
+            const userInfo = await axios.get('https://www.googleapis.com/oauth2/v3/userinfo', {
+              headers: { Authorization: `Bearer ${response.access_token}` }
+            });
+  
+            const userResponse = await axios.post(
+              `${import.meta.env.VITE_BASE_URL}/auth/google-signin`,
+              { 
+                token: response.access_token,
+                userInfo: userInfo.data
+              },
+              {
+                headers: {
+                  'Content-Type': 'application/json',
+                },
+              }
+            );
+  
+            localStorage.setItem('accessToken', userResponse.data.accessToken);
+            localStorage.setItem('refreshToken', userResponse.data.refreshToken);
+  
+            login(userResponse.data.user.username, userResponse.data.user._id);
+  
+            toast.success(`${userResponse.data.user.username}, ${userResponse.data.message}`);
+            navigate("/", { replace: true });
+          } catch (error) {
+            console.error('Google Sign-In Error:', error.response?.data || error.message);
+            toast.error(`An error occurred during Google Sign-In: ${error.response?.data?.message || error.message}`);
+          }
+        }
+      },
+    });
+  
+    client.requestAccessToken();
+  };
+  
+  
+  
+  useEffect(() => {
+    const script = document.createElement('script');
+    script.src = 'https://accounts.google.com/gsi/client';
+    script.async = true;
+    script.defer = true;
+    document.body.appendChild(script);
+  
+    return () => {
+      document.body.removeChild(script);
+    };
+  }, []);
+  
+
   return (
     <div className="w-full min-h-[100vh]">
       <Toaster closeButton="true" richColors="true" position="top-center"/>
@@ -197,7 +255,7 @@ const SignUpPage = () => {
             </form>
           </Form>
           <CardFooter>
-            <Button className="w-full">
+            <Button className="w-full" onClick={handleGoogleSignIn}>
               <img
                 width="30"
                 height="30"
