@@ -1,7 +1,7 @@
 const Snippet = require('../models/snippet.model');
 const {ApiError} = require("../utils/ApiError");
 
-const createSnippet = async(req, resizeBy, next) => {
+const createSnippet = async(req, res, next) => {
     try{
         const {title, language, code} = req.body;
         const snippet = await Snippet.create({
@@ -12,6 +12,7 @@ const createSnippet = async(req, resizeBy, next) => {
         });
         res.status(201).json({snippet, message: "Snippet created successfully"});
     } catch (error) {
+        console.log(error);
         next(new ApiError(500, error?.message || "Cannot create snippet"));
     }
 }

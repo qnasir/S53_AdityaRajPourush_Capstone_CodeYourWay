@@ -24,6 +24,9 @@ import {
 } from "@/components/ui/select"
 import Editor from '@monaco-editor/react';
 import axios from "axios";
+import { useSnippet } from "@/components/context/snippetContext";
+import { useLocation, useNavigate } from "react-router-dom";
+import { Toaster, toast } from "sonner";
 
 
 const Playground = () => {
@@ -32,6 +35,61 @@ const Playground = () => {
   const [code, setCode] = useState('');
   const [input, setInput] = useState('');
   const [output, setOutput] = useState('');
+
+  const { createSnippet,
+    updateSnippet,
+    getSnippetById,
+    deleteSnippet } = useSnippet();
+  const [snippetId, setSnippetId] = useState(null);
+  const [title, setTitle] = useState('');
+  const location = useLocation();
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    const params = new URLSearchParams(location.search);
+    const id = params.get('id');
+    if (id) {
+      setSnippetId(id);
+      loadSnippet(id);
+    }
+  }, [location]);
+
+  const loadSnippet = async (id) => {
+    const snippet = await getSnippetById(id);
+    if (snippet) {
+      setSelectedLanguage(snippet.language);
+      setCode(snippet.code);
+      setTitle(snippet.title);
+      // setInput(snippet.input);
+    }
+  }
+
+  const saveSnippet = async () => {
+    try {
+      if (!title) {
+        alert('Please enter a title for your snippet')
+      }
+
+      const snippetData = {
+        title,
+        language: selectedLanguage,
+        code
+      };
+      if (snippetId) {
+        const response = await updateSnippet(snippetId, snippetData);
+        console.log(response)
+        toast.success("Snippet updated successfully.");
+      } else {
+        const newSnippet = await createSnippet(snippetData,);
+        toast.success("Snippet saved successfully.");
+        setSnippetId(newSnippet._id);
+        navigate(`/playground?id=${newSnippet._id}`);
+      }
+    } catch (error) {
+      console.error('Error saving snippet:', error);
+      toast.error("Error saving snippet.");
+    }
+  }
 
   useEffect(() => {
     console.log(selectedLanguage);
@@ -69,6 +127,7 @@ const Playground = () => {
 
   return (
     <div>
+      <Toaster closeButton="true" richColors="true" position="top-center" />
       <Navbar_1 />
       <div className="w-[99vw] m-auto h-[92vh] pt-2">
         <ResizablePanelGroup
@@ -79,8 +138,8 @@ const Playground = () => {
             <div className="flex items-center justify-center min-w-36">
               <div className="nav bg-secondary h-[5vh] flex items-center w-full px-3 justify-between m-1 rounded-sm">
                 <div className="flex items-center justify-between w-[20vw]">
-                  <Input className="p-1 border-secondary-foreground h-[3.7vh] max-w-[180px]" />
-                  <Button className="mx-1" variant="outline"><UploadIcon className="mx-0.5" />Save</Button>
+                  <Input className="p-1 border-secondary-foreground h-[3.7vh] max-w-[180px]" value={title} onChange={(e) => setTitle(e.target.value)} placeholder="Untitled" />
+                  <Button className="mx-1" variant="outline" onClick={saveSnippet}><UploadIcon className="mx-0.5" />Save</Button>
                   <TooltipProvider>
                     <Tooltip>
                       <TooltipTrigger>
