@@ -2,6 +2,8 @@ const userValidator = require("../validators/user.validator");
 const User = require("../models/user.model");
 const { ApiError } = require("../utils/ApiError");
 const { generateAccessAndRefreshTokens } = require("../utils/TokenGenerator");
+const { OAuth2Client } = require('google-auth-library');
+const client = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
 
 // @desc register or signup user
 // @route POST /auth/signup
@@ -207,9 +209,55 @@ const newAccessToken = async (req, res, next) => {
 
 }
 
+
+const googleSignIn = async (req, res, next) => {
+  try {
+    const { token, userInfo } = req.body;
+
+    // Verify the access token
+    const ticket = await client.getTokenInfo(token);
+
+    if (ticket.email !== userInfo.email) {
+      throw new Error('Email mismatch');
+    }
+
+    // Check if user exists in your database
+    let user = await User.findOne({ email: userInfo.email });
+    
+    if (!user) {
+      // If user doesn't exist, create a new user
+      user = await User.create({
+        email: userInfo.email,
+        fullname: userInfo.name,
+        username: userInfo.email.split('@')[0], // or generate a unique username
+        profileImage: userInfo.picture,
+        password: Math.random().toString(36).slice(-8), // generate a random password
+      });
+    }
+
+    const { accessToken, refreshToken } = await generateAccessAndRefreshTokens(user, next);
+
+    res.status(200).json({
+      user: {
+        _id: user._id,
+        username: user.username,
+        email: user.email,
+        fullname: user.fullname,
+      },
+      accessToken,
+      refreshToken,
+      message: "Google Sign-In successful",
+    });
+  } catch (error) {
+    next(new ApiError(500, error?.message || "An error occurred during Google Sign-In"));
+  }
+};
+
+
 module.exports = {
   signUpUser,
   logInUser,
   logOutUser,
-  newAccessToken
+  newAccessToken,
+  googleSignIn
 };
