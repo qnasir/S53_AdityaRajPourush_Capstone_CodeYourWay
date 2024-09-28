@@ -1,11 +1,11 @@
-import React, { useContext } from "react";
+import React, { useContext, useEffect } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { HomeIcon } from "@radix-ui/react-icons";
 import { Button } from "@/components/ui/button";
 import { ModeToggle } from "@/components/mode-toggle";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import {
   Card,
   CardContent,
@@ -80,6 +80,7 @@ const SignUpPage = () => {
   });
 
   const {login} = useContext(AuthContext)
+  const navigate = useNavigate();
 
   async function onSubmit(values) {
     console.log(values);
