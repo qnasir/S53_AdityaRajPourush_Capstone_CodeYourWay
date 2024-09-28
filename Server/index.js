@@ -50,7 +50,7 @@ const userRoutes = require("./routes/user.routes");
 app.use("/user", userRoutes);
 
 // Routes for snippet
-app.use("/snippet", snippetRoutes);
+app.use("/snippets", snippetRoutes);
 
 // Root route handler
 app.get("/", (req, res) => res.send(`Server running on port ${port}`));

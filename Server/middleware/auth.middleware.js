@@ -7,6 +7,8 @@ const verifyJWTToken = async (req, res, next) => {
         
         const token = req.cookies?.accessToken || req.headers?.authorization?.split(" ")[1];
 
+        // console.log("token: ", token);
+
         if (!token){
             const err = new ApiError(401, "Unauthorized Access");
             next(err);

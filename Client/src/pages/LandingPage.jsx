@@ -1,11 +1,24 @@
 import Navbar_1 from "@/components/Navbar_1";
 import { AuthContext } from "@/components/context/authContext";
+import { useSnippet } from "@/components/context/snippetContext";
 import { Button } from "@/components/ui/button";
-import React, { useContext } from "react";
+import React, { useContext, useEffect } from "react";
 import { Link } from "react-router-dom";
 
 const LandingPage = () => {
   const { username, isLoggedIn } = useContext(AuthContext);
+  const { snippets, fetchSnippets } = useSnippet();
+
+  useEffect(() => {
+    const fetchData = async () => {
+      if (isLoggedIn) {
+        await fetchSnippets();
+      }
+    };
+  
+    fetchData();
+  }, [isLoggedIn, fetchSnippets]);
+  
 
   return (
     <div>
@@ -30,6 +43,17 @@ const LandingPage = () => {
             {/* Add profile content here */}
           </div>
         </div>
+        <div className="w-full sm:w-[48%] border my-4 rounded px-4 py-6">
+            <h2 className="text-xl font-bold mb-2">Your Snippets</h2>
+            {snippets.map(snippet => (
+              <Link key={snippet._id} to={`/playground?id=${snippet._id}`}>
+                <div className="p-2 border rounded mb-2">
+                  <h3>{snippet.title}</h3>
+                  <p>Language: {snippet.language}</p>
+                </div>
+              </Link>
+            ))}
+          </div>
       </div>
     </div>
   );
