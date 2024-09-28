@@ -4,10 +4,11 @@ import { useSnippet } from "@/components/context/snippetContext";
 import { Button } from "@/components/ui/button";
 import React, { useContext, useEffect } from "react";
 import { Link } from "react-router-dom";
+import { Trash2 } from "lucide-react"
 
 const LandingPage = () => {
   const { username, isLoggedIn } = useContext(AuthContext);
-  const { snippets, fetchSnippets } = useSnippet();
+  const { snippets, fetchSnippets, deleteSnippet } = useSnippet();
 
   useEffect(() => {
     const fetchData = async () => {
@@ -18,6 +19,15 @@ const LandingPage = () => {
   
     fetchData();
   }, [isLoggedIn, fetchSnippets]);
+
+  const handleDelete = async (id) => {
+    try {
+      await deleteSnippet(id);
+      await fetchSnippets(); // Refresh the snippets list
+    } catch (error) {
+      console.error('Error deleting snippet:', error);
+    }
+  }
   
 
   return (
@@ -44,16 +54,28 @@ const LandingPage = () => {
           </div>
         </div>
         <div className="w-full sm:w-[48%] border my-4 rounded px-4 py-6">
-            <h2 className="text-xl font-bold mb-2">Your Snippets</h2>
-            {snippets.map(snippet => (
-              <Link key={snippet._id} to={`/playground?id=${snippet._id}`}>
-                <div className="p-2 border rounded mb-2">
-                  <h3>{snippet.title}</h3>
-                  <p>Language: {snippet.language}</p>
-                </div>
-              </Link>
-            ))}
-          </div>
+      <h2 className="text-xl font-bold mb-2">Your Snippets</h2>
+      {snippets.map(snippet => (
+        <div key={snippet._id} className="p-2 border rounded mb-2 flex justify-between items-center">
+          <Link to={`/playground?id=${snippet._id}`}>
+            <div>
+              <h3>{snippet.title}</h3>
+              <p>Language: {snippet.language}</p>
+            </div>
+          </Link>
+          <Button 
+            variant="ghost" 
+            size="icon"
+            onClick={(e) => {
+              e.preventDefault();
+              handleDelete(snippet._id);
+            }}
+          >
+            <Trash2 className="h-4 w-4" />
+          </Button>
+        </div>
+      ))}
+    </div>
       </div>
     </div>
   );
