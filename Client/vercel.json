@@ -1,5 +1,6 @@
 {
     "rewrites": [
-        {"source": "/(.*)", "destination": "/"}
+      { "source": "/auth/(.*)", "destination": "https://codeyourway-backend.vercel.app/auth/$1" },
+      { "source": "/(.*)", "destination": "/index.html" }
     ]
-}
+  }
