@@ -67,13 +67,14 @@ const Playground = () => {
   const saveSnippet = async () => {
     try {
       if (!title) {
-        alert('Please enter a title for your snippet')
+        toast.warning("Please enter a title for the snippet, then only you can save !")
       }
 
       const snippetData = {
         title,
         language: selectedLanguage,
-        code
+        code,
+        input
       };
       if (snippetId) {
         const response = await updateSnippet(snippetId, snippetData);

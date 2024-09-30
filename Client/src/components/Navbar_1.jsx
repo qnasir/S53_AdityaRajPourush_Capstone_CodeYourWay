@@ -29,7 +29,10 @@ const Navbar_1 = () => {
     >
       <div className="w-full max-w-7xl m-auto flex flex-col items-center sm:flex-row sm:justify-between">
         <div className="logo w-full flex justify-between sm:justify-center items-center sm:w-auto mb-4 sm:mb-0 px-[1vw]">
-          <h1>CodeYourWay</h1>
+          {/* linking to home page... */}
+          <Link to="/" className="text-bold cursor-pointer">
+            <h1>CodeYourWay</h1>
+          </Link>
           <Drawer>
             <DrawerTrigger asChild>
               <Button variant="ghost" size="icon" className="sm:hidden">
@@ -41,6 +44,8 @@ const Navbar_1 = () => {
                 <div className="flex justify-between w-full sm:w-auto">
                   <ModeToggle />
                   <div>
+                  {/* when logged in, user will see his name, else login and register */}
+                  {/* buttons */}
                     {isLoggedIn ? (
                       <div className="flex justify-between">
                         <Button variant="outline">{username}</Button>
@@ -68,11 +73,14 @@ const Navbar_1 = () => {
                 </div>
               </DrawerHeader>
               <DrawerFooter>
-                <div className="nav-links">
+                <div className="nav-links font-semibold">
                   <ul>
                     <li>Problems</li>
                     <li>Discuss</li>
-                    <li>Playground</li>
+                    {/* linking to playground page */}
+                    <Link to="/playground" className="text-bold cursor-pointer">
+                      <li>Playground</li>
+                    </Link>
                   </ul>
                 </div>
               </DrawerFooter>
@@ -84,7 +92,10 @@ const Navbar_1 = () => {
             <ul className="flex justify-evenly w-[40vw]">
               <li>Problems</li>
               <li>Discuss</li>
-              <li>Playground</li>
+              {/* linking to playground page */}
+              <Link to="/playground" className="text-bold cursor-pointer">
+                <li>Playground</li>
+              </Link>
             </ul>
           </div>
           <div className="flex justify-between w-full sm:w-auto">
